@@ -942,6 +942,7 @@ var script$4 = {
   name: "GradientPoint",
 
   props: {
+    canAddGradientPoint: Boolean,
     point: Object,
     activePointIndex: Number,
     index: Number,
@@ -1019,6 +1020,7 @@ var script$4 = {
       var offsetX = ref.offsetX;
       var layerX = ref.layerX;
 
+      if (!this.canAddGradientPoint) { return }
       event.stopPropagation();
       var ref$1 = this.changeObjectPositions(event, { startX: startX, offsetX: offsetX, layerX: layerX, mouseStatus: 'moving' });
       var positions = ref$1.positions;
@@ -1113,6 +1115,7 @@ var script$5 = {
   name: "index",
 
   props: {
+    canAddGradientPoint: Boolean,
     points: Array,
     activePointIndex: Number,
     changeActivePointIndex: Function,
@@ -1154,6 +1157,7 @@ var script$5 = {
 
   methods: {
     pointsContainerClick: function pointsContainerClick(event) {
+      if (!this.canAddGradientPoint) { return }
       var left = updateGradientActivePercent(event.layerX, this.width);
 
       this.addPoint(left);
@@ -1233,36 +1237,37 @@ __vue_render__$5._withStripped = true;
   );
 
 var script$6 = {
-    name: "Area",
+  name: "Area",
 
-    props: {
-        isGradient: Boolean,
-        red: Number,
-        green: Number,
-        blue: Number,
-        alpha: Number,
-        hue: Number,
-        saturation: Number,
-        value: Number,
-        updateColor: Function,
-        points: Array,
-        degree: Number,
-        type: String,
-        activePointIndex: Number,
-        changeGradientControl: Function,
-        changeActivePointIndex: Function,
-        updateGradientLeft: Function,
-        addPoint: Function,
-        removePoint: Function,
-    },
+  props: {
+    isGradient: Boolean,
+    canAddGradientPoint: Boolean,
+    red: Number,
+    green: Number,
+    blue: Number,
+    alpha: Number,
+    hue: Number,
+    saturation: Number,
+    value: Number,
+    updateColor: Function,
+    points: Array,
+    degree: Number,
+    type: String,
+    activePointIndex: Number,
+    changeGradientControl: Function,
+    changeActivePointIndex: Function,
+    updateGradientLeft: Function,
+    addPoint: Function,
+    removePoint: Function,
+  },
 
-    components: {
-        Picker: __vue_component__,
-        GradientPoints: __vue_component__$5,
-        Preview: __vue_component__$1,
-        Hue: __vue_component__$2,
-        Alpha: __vue_component__$3
-    },
+  components: {
+    Picker: __vue_component__,
+    GradientPoints: __vue_component__$5,
+    Preview: __vue_component__$1,
+    Hue: __vue_component__$2,
+    Alpha: __vue_component__$3
+  },
 };
 
 /* script */
@@ -1295,6 +1300,7 @@ var __vue_render__$6 = function() {
               type: _vm.type,
               degree: _vm.degree,
               points: _vm.points,
+              canAddGradientPoint: _vm.canAddGradientPoint,
               activePointIndex: _vm.activePointIndex,
               changeActivePointIndex: _vm.changeActivePointIndex,
               updateGradientLeft: _vm.updateGradientLeft,
@@ -2389,235 +2395,239 @@ __vue_render__$d._withStripped = true;
   );
 
 var script$e = {
-    name: "Gradient",
+  name: "Gradient",
 
-    props: {
-        type: {
-            type: String,
-            default: 'linear'
-        },
-        degree: {
-            type: Number,
-            default: 0
-        },
-        points: {
-            type: Array,
-            default: function () {
-                return [
-                    {
-                        left: 0,
-                        red: 0,
-                        green: 0,
-                        blue: 0,
-                        alpha: 1,
-                    },
-                    {
-                        left: 100,
-                        red: 255,
-                        green: 0,
-                        blue: 0,
-                        alpha: 1,
-                    } ];
-            }
-        },
-        onStartChange: Function,
-        onChange: Function,
-        onEndChange: Function,
+  props: {
+    type: {
+      type: String,
+      default: 'linear'
     },
-
-    components: {
-        GradientControls: __vue_component__$d,
-        Area: __vue_component__$6,
-        Preview: __vue_component__$b
+    degree: {
+      type: Number,
+      default: 0
     },
-
-    data: function data() {
-        return {
-            activePointIndex: 0,
-            gradientPoints: this.points,
-            activePoint: this.points[0],
-            colorRed: this.points[0].red,
-            colorGreen: this.points[0].green,
-            colorBlue: this.points[0].blue,
-            colorAlpha: this.points[0].alpha,
-            colorHue: 0,
-            colorSaturation: 100,
-            colorValue: 100,
-            gradientType: this.type,
-            gradientDegree: this.degree,
-            actions: {
-                onStartChange: this.onStartChange,
-                onChange: this.onChange,
-                onEndChange: this.onEndChange,
-            }
-        }
+    canAddGradientPoint: {
+      type: Boolean,
+      default: false,
     },
-
-    mounted: function mounted() {
-        var ref = rgbToHSv({ red: this.colorRed, green: this.colorGreen, blue: this.colorBlue });
-        var hue = ref.hue;
-        var saturation = ref.saturation;
-        var value = ref.value;
-
-        this.colorHue = hue;
-        this.colorSaturation = saturation;
-        this.colorValue = value;
-
-        document.addEventListener('keyup', this.keyUpHandler);
+    points: {
+      type: Array,
+      default: function () {
+        return [
+          {
+            left: 0,
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1,
+          },
+          {
+            left: 100,
+            red: 255,
+            green: 0,
+            blue: 0,
+            alpha: 1,
+          } ];
+      }
     },
+    onStartChange: Function,
+    onChange: Function,
+    onEndChange: Function,
+  },
 
-    beforeDestroy: function beforeDestroy() {
-        document.removeEventListener('keyup', this.keyUpHandler);
-    },
+  components: {
+    GradientControls: __vue_component__$d,
+    Area: __vue_component__$6,
+    Preview: __vue_component__$b
+  },
 
-    methods: {
-        removePoint: function removePoint(index) {
-            if ( index === void 0 ) index = this.activePointIndex;
-
-            if (this.gradientPoints.length <= 2) {
-                return;
-            }
-
-            this.gradientPoints.splice(index, 1);
-
-
-            if (index > 0) {
-                this.activePointIndex = index - 1;
-            }
-
-            this.onChange && this.onChange({
-                points: this.gradientPoints,
-                type: this.gradientType,
-                degree: this.gradientDegree,
-                style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
-            });
-        },
-
-        keyUpHandler: function keyUpHandler(event) {
-            if ((event.keyCode === 46 || event.keyCode === 8)) {
-                this.removePoint(this.activePointIndex);
-            }
-        },
-
-        changeActivePointIndex: function changeActivePointIndex(index) {
-            this.activePointIndex = index;
-
-            this.activePoint = this.gradientPoints[index];
-
-            var ref = this.activePoint;
-            var red = ref.red;
-            var green = ref.green;
-            var blue = ref.blue;
-            var alpha = ref.alpha;
-
-            this.colorRed = red;
-            this.colorGreen = green;
-            this.colorBlue = blue;
-            this.colorAlpha = alpha;
-
-            var ref$1 = rgbToHSv({ red: red, green: green, blue: blue });
-            var hue = ref$1.hue;
-            var saturation = ref$1.saturation;
-            var value = ref$1.value;
-
-            this.colorHue = hue;
-            this.colorSaturation = saturation;
-            this.colorValue = value;
-        },
-
-        changeGradientControl: function changeGradientControl(ref) {
-            var type = ref.type;
-            var degree = ref.degree;
-
-            type = getRightValue(type, this.gradientType);
-            degree = getRightValue(degree, this.gradientDegree);
-
-            this.gradientType = type;
-            this.gradientDegree = degree;
-
-            this.onChange({
-                points: this.gradientPoints,
-                type: this.gradientType,
-                degree: this.gradientDegree,
-                style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
-            });
-        },
-
-        updateColor: function updateColor(ref, actionName) {
-            var red = ref.red;
-            var green = ref.green;
-            var blue = ref.blue;
-            var alpha = ref.alpha;
-            var hue = ref.hue;
-            var saturation = ref.saturation;
-            var value = ref.value;
-            if ( actionName === void 0 ) actionName = 'onChange';
-
-            red = getRightValue(red, this.colorRed);
-            green = getRightValue(green, this.colorGreen);
-            blue = getRightValue(blue, this.colorBlue);
-            alpha = getRightValue(alpha, this.colorAlpha);
-            hue = getRightValue(hue, this.colorHue);
-            saturation = getRightValue(saturation, this.colorSaturation);
-            value = getRightValue(value, this.colorValue);
-
-            var localGradientPoints = this.gradientPoints.slice();
-
-            localGradientPoints[this.activePointIndex] = Object.assign({}, localGradientPoints[this.activePointIndex],
-                {red: red,
-                green: green,
-                blue: blue,
-                alpha: alpha});
-
-            this.colorRed = red;
-            this.colorGreen = green;
-            this.colorBlue = blue;
-            this.colorAlpha = alpha;
-            this.colorHue = hue;
-            this.colorSaturation = saturation;
-            this.colorValue = value;
-            this.gradientPoints = localGradientPoints;
-
-            var action = this.actions[actionName];
-
-            action && action({
-                points: localGradientPoints,
-                type: this.gradientType,
-                degree: this.gradientDegree,
-                style: generateGradientStyle(localGradientPoints, this.gradientType, this.gradientDegree),
-            });
-        },
-
-        updateGradientLeft: function updateGradientLeft(left, index, actionName) {
-            if ( actionName === void 0 ) actionName = 'onChange';
-
-            this.gradientPoints[index].left = left;
-
-            var action = this.actions[actionName];
-
-            action && action({
-                points: this.gradientPoints,
-                type: this.gradientType,
-                degree: this.gradientDegree,
-                style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
-            });
-        },
-
-        addPoint: function addPoint(left) {
-            this.gradientPoints.push(Object.assign({}, this.gradientPoints[this.activePointIndex],
-                {left: left}));
-
-            this.activePointIndex = this.gradientPoints.length - 1;
-
-            this.onChange && this.onChange({
-                points: this.gradientPoints,
-                type: this.gradientType,
-                degree: this.gradientDegree,
-                style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
-            });
-        },
-
+  data: function data() {
+    return {
+      activePointIndex: 0,
+      gradientPoints: this.points,
+      activePoint: this.points[0],
+      colorRed: this.points[0].red,
+      colorGreen: this.points[0].green,
+      colorBlue: this.points[0].blue,
+      colorAlpha: this.points[0].alpha,
+      colorHue: 0,
+      colorSaturation: 100,
+      colorValue: 100,
+      gradientType: this.type,
+      gradientDegree: this.degree,
+      actions: {
+        onStartChange: this.onStartChange,
+        onChange: this.onChange,
+        onEndChange: this.onEndChange,
+      }
     }
+  },
+
+  mounted: function mounted() {
+    var ref = rgbToHSv({ red: this.colorRed, green: this.colorGreen, blue: this.colorBlue });
+    var hue = ref.hue;
+    var saturation = ref.saturation;
+    var value = ref.value;
+
+    this.colorHue = hue;
+    this.colorSaturation = saturation;
+    this.colorValue = value;
+
+    document.addEventListener('keyup', this.keyUpHandler);
+  },
+
+  beforeDestroy: function beforeDestroy() {
+    document.removeEventListener('keyup', this.keyUpHandler);
+  },
+
+  methods: {
+    removePoint: function removePoint(index) {
+      if ( index === void 0 ) index = this.activePointIndex;
+
+      if (this.gradientPoints.length <= 2) {
+        return;
+      }
+
+      this.gradientPoints.splice(index, 1);
+
+
+      if (index > 0) {
+        this.activePointIndex = index - 1;
+      }
+
+      this.onChange && this.onChange({
+        points: this.gradientPoints,
+        type: this.gradientType,
+        degree: this.gradientDegree,
+        style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
+      });
+    },
+
+    keyUpHandler: function keyUpHandler(event) {
+      if ((event.keyCode === 46 || event.keyCode === 8)) {
+        this.removePoint(this.activePointIndex);
+      }
+    },
+
+    changeActivePointIndex: function changeActivePointIndex(index) {
+      this.activePointIndex = index;
+
+      this.activePoint = this.gradientPoints[index];
+
+      var ref = this.activePoint;
+      var red = ref.red;
+      var green = ref.green;
+      var blue = ref.blue;
+      var alpha = ref.alpha;
+
+      this.colorRed = red;
+      this.colorGreen = green;
+      this.colorBlue = blue;
+      this.colorAlpha = alpha;
+
+      var ref$1 = rgbToHSv({ red: red, green: green, blue: blue });
+      var hue = ref$1.hue;
+      var saturation = ref$1.saturation;
+      var value = ref$1.value;
+
+      this.colorHue = hue;
+      this.colorSaturation = saturation;
+      this.colorValue = value;
+    },
+
+    changeGradientControl: function changeGradientControl(ref) {
+      var type = ref.type;
+      var degree = ref.degree;
+
+      type = getRightValue(type, this.gradientType);
+      degree = getRightValue(degree, this.gradientDegree);
+
+      this.gradientType = type;
+      this.gradientDegree = degree;
+
+      this.onChange({
+        points: this.gradientPoints,
+        type: this.gradientType,
+        degree: this.gradientDegree,
+        style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
+      });
+    },
+
+    updateColor: function updateColor(ref, actionName) {
+      var red = ref.red;
+      var green = ref.green;
+      var blue = ref.blue;
+      var alpha = ref.alpha;
+      var hue = ref.hue;
+      var saturation = ref.saturation;
+      var value = ref.value;
+      if ( actionName === void 0 ) actionName = 'onChange';
+
+      red = getRightValue(red, this.colorRed);
+      green = getRightValue(green, this.colorGreen);
+      blue = getRightValue(blue, this.colorBlue);
+      alpha = getRightValue(alpha, this.colorAlpha);
+      hue = getRightValue(hue, this.colorHue);
+      saturation = getRightValue(saturation, this.colorSaturation);
+      value = getRightValue(value, this.colorValue);
+
+      var localGradientPoints = this.gradientPoints.slice();
+
+      localGradientPoints[this.activePointIndex] = Object.assign({}, localGradientPoints[this.activePointIndex],
+        {red: red,
+        green: green,
+        blue: blue,
+        alpha: alpha});
+
+      this.colorRed = red;
+      this.colorGreen = green;
+      this.colorBlue = blue;
+      this.colorAlpha = alpha;
+      this.colorHue = hue;
+      this.colorSaturation = saturation;
+      this.colorValue = value;
+      this.gradientPoints = localGradientPoints;
+
+      var action = this.actions[actionName];
+
+      action && action({
+        points: localGradientPoints,
+        type: this.gradientType,
+        degree: this.gradientDegree,
+        style: generateGradientStyle(localGradientPoints, this.gradientType, this.gradientDegree),
+      });
+    },
+
+    updateGradientLeft: function updateGradientLeft(left, index, actionName) {
+      if ( actionName === void 0 ) actionName = 'onChange';
+
+      this.gradientPoints[index].left = left;
+
+      var action = this.actions[actionName];
+
+      action && action({
+        points: this.gradientPoints,
+        type: this.gradientType,
+        degree: this.gradientDegree,
+        style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
+      });
+    },
+
+    addPoint: function addPoint(left) {
+      this.gradientPoints.push(Object.assign({}, this.gradientPoints[this.activePointIndex],
+        {left: left}));
+
+      this.activePointIndex = this.gradientPoints.length - 1;
+
+      this.onChange && this.onChange({
+        points: this.gradientPoints,
+        type: this.gradientType,
+        degree: this.gradientDegree,
+        style: generateGradientStyle(this.gradientPoints, this.gradientType, this.gradientDegree),
+      });
+    },
+
+  }
 };
 
 /* script */
@@ -2641,6 +2651,7 @@ var __vue_render__$e = function() {
       _vm._v(" "),
       _c("Area", {
         attrs: {
+          "can-add-gradient-point": _vm.canAddGradientPoint,
           red: _vm.colorRed,
           green: _vm.colorGreen,
           blue: _vm.colorBlue,
@@ -2710,67 +2721,71 @@ __vue_render__$e._withStripped = true;
 Vue.use(Plugin);
 
 var script$f = {
-    name: "ColorPicker",
+  name: "ColorPicker",
 
-    props: {
-        isGradient: {
-            type: Boolean,
-            default: false,
-        },
-        color: {
-            type: Object,
-            default: function () { return ({
-                red: 255,
-                green: 0,
-                blue: 0,
-                alpha: 1,
-                hue: 0,
-                saturation: 100,
-                value: 100,
-            }); }
-        },
-
-        gradient: {
-            type: Object,
-            default: function () { return ({
-                type: 'linear',
-                degree: 0,
-                points: [
-                    {
-                        left: 0,
-                        red: 0,
-                        green: 0,
-                        blue: 0,
-                        alpha: 1,
-                    },
-                    {
-                        left: 100,
-                        red: 255,
-                        green: 0,
-                        blue: 0,
-                        alpha: 1,
-                    } ],
-            }); }
-        },
-
-        onStartChange: {
-            type: Function,
-            default: function () {}
-        },
-        onChange: {
-            type: Function,
-            default: function () {}
-        },
-        onEndChange: {
-            type: Function,
-            default: function () {}
-        },
+  props: {
+    isGradient: {
+      type: Boolean,
+      default: false,
+    },
+    canAddGradientPoint: {
+      type: Boolean,
+      default: false,
+    },
+    color: {
+      type: Object,
+      default: function () { return ({
+        red: 255,
+        green: 0,
+        blue: 0,
+        alpha: 1,
+        hue: 0,
+        saturation: 100,
+        value: 100,
+      }); }
     },
 
-    components: {
-        Solid: __vue_component__$c,
-        Gradient: __vue_component__$e
-    }
+    gradient: {
+      type: Object,
+      default: function () { return ({
+        type: 'linear',
+        degree: 0,
+        points: [
+          {
+            left: 0,
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1,
+          },
+          {
+            left: 100,
+            red: 255,
+            green: 0,
+            blue: 0,
+            alpha: 1,
+          } ],
+      }); }
+    },
+
+    onStartChange: {
+      type: Function,
+      default: function () { }
+    },
+    onChange: {
+      type: Function,
+      default: function () { }
+    },
+    onEndChange: {
+      type: Function,
+      default: function () { }
+    },
+  },
+
+  components: {
+    Solid: __vue_component__$c,
+    Gradient: __vue_component__$e
+  }
 };
 
 /* script */
@@ -2788,6 +2803,7 @@ var __vue_render__$f = function() {
       _vm.isGradient
         ? _c("Gradient", {
             attrs: {
+              canAddGradientPoint: _vm.canAddGradientPoint,
               points: _vm.gradient.points,
               type: _vm.gradient.type,
               degree: _vm.gradient.degree,
@@ -2820,7 +2836,7 @@ __vue_render__$f._withStripped = true;
   /* style */
   var __vue_inject_styles__$f = function (inject) {
     if (!inject) { return }
-    inject("data-v-10a7b98c_0", { source: "* {\n  box-sizing: border-box;\n}\n.ui-color-picker {\n  margin: 8px;\n  background-color: #ffffff;\n  display: flex;\n  flex-direction: column;\n  width: 280px;\n  user-select: none;\n}\n.ui-color-picker .gradient-controls {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 8px;\n  height: 24px;\n  padding: 0 16px;\n}\n.ui-color-picker .gradient-controls .gradient-type {\n  flex: 1;\n  display: flex;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item {\n  height: 28px;\n  width: 28px;\n  border-radius: 50%;\n  position: relative;\n  cursor: pointer;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #1f2667;\n  border-radius: 50%;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.liner-gradient {\n  background: linear-gradient(270deg, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.radial-gradient {\n  margin-left: 8px;\n  background: radial-gradient(circle, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options {\n  position: relative;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees {\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n  position: relative;\n  width: 28px;\n  height: 28px;\n  border: 3px solid #1f2667;\n  border-radius: 18px;\n  margin-right: 54px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center {\n  position: relative;\n  width: 6px;\n  height: 22px;\n  pointer-events: none;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center .gradient-degree-pointer {\n  position: absolute;\n  width: 6px;\n  height: 6px;\n  top: 2px;\n  border-radius: 3px;\n  background: #1f2667;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 48px;\n  height: 28px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #bbbfc5;\n  border-radius: 6px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value p {\n  text-align: center;\n  padding: 0 6px;\n}\n.ui-color-picker .picker-area {\n  display: flex;\n  flex-direction: column;\n  padding: 0 16px;\n}\n.ui-color-picker .picker-area.gradient-tab .picking-area {\n  margin-bottom: 10px;\n}\n.ui-color-picker .picker-area .picking-area {\n  width: 100%;\n  height: 160px;\n  margin-bottom: 16px;\n  position: relative;\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .picking-area:hover {\n  cursor: default;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);\n  border-radius: 3px;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 .picking-area-overlay2 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, black 100%);\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .preview {\n  display: flex;\n  flex-direction: row;\n  margin-bottom: 16px;\n}\n.ui-color-picker .picker-area .preview .preview-box {\n  box-sizing: border-box;\n  height: 36px;\n  width: 36px;\n  border-radius: 8px;\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  margin-left: 6px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue {\n  width: 100%;\n  position: relative;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n  background-color: red;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue .hue-area {\n  position: relative;\n  height: 14px;\n  background: -webkit-linear-gradient(left, #ff0000, #ff0080, #ff00ff, #8000ff, #0000ff, #0080ff, #00ffff, #00ff80, #00ff00, #80ff00, #ffff00, #ff8000, #ff0000);\n  background: -o-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -ms-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -moz-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n  border-radius: 10px;\n  height: 14px;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .gradient {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area {\n  width: 100%;\n  height: 100%;\n  background: url(\"../../assets/images/alpha-background.svg\");\n  background-size: auto;\n  background-position: 50% 50%;\n  border-radius: 10px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area .alpha-mask {\n  width: 100%;\n  height: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .gradient {\n  width: 100%;\n  height: 14px;\n  position: relative;\n  cursor: pointer;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .gradient .gradient-slider-container {\n  height: 100%;\n  width: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .picker-pointer {\n  position: absolute;\n  top: 1px;\n  height: 12px;\n  width: 12px;\n  border: 1px solid #ffffff;\n  background: transparent;\n  border-radius: 50%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);\n}\n.ui-color-picker .picker-area .picker-pointer .child-point {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  height: 3px;\n  width: 3px;\n  background: #ffffff;\n  border-radius: 50%;\n  opacity: 0;\n  transition: opacity 0.33s;\n}\n.ui-color-picker .picker-area .picker-pointer .child-point.active {\n  opacity: 1;\n}\n.ui-color-picker .color-preview-area {\n  margin-bottom: 8px;\n  padding: 0 16px;\n}\n.ui-color-picker .color-preview-area .input-group {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n}\n.ui-color-picker .color-preview-area .input-group .uc-field-group:not(:last-child) {\n  margin-right: 7px;\n}\n.ui-color-picker .color-preview-area .hex {\n  width: 65px;\n}\n.ui-color-picker .color-preview-area .rgb {\n  width: 40px;\n}\n.ui-color-picker .colors {\n  padding: 3px 16px 0;\n}\n.ui-color-picker .colors .colors-label {\n  display: flex;\n  align-items: center;\n  margin-bottom: 4px;\n  cursor: pointer;\n}\n.ui-color-picker .colors .colors-label .uc-icon {\n  margin-right: 8px;\n  transition: transform 0.3s;\n}\n.ui-color-picker .colors .colors-label .tp-text {\n  text-transform: uppercase;\n}\n.ui-color-picker .colors .colors-label.show + .colors-item-container {\n  max-height: 80px;\n  padding-bottom: 16px;\n}\n.ui-color-picker .colors .colors-label.show .uc-icon {\n  transform: rotate(-90deg);\n}\n.ui-color-picker .colors .template {\n  display: flex;\n  flex-direction: column;\n}\n.ui-color-picker .colors .global {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n.ui-color-picker .colors .colors-item-container {\n  display: flex;\n  flex-wrap: wrap;\n  width: 100%;\n  transition: max-height 0.3s, padding-bottom 0.3s;\n  max-height: 0;\n  overflow: hidden;\n}\n.ui-color-picker .colors .colors-item-container .colors-item {\n  height: 24px;\n  width: 24px;\n  border-radius: 50%;\n  background-color: #ebedf5;\n  cursor: pointer;\n  position: relative;\n  margin-top: 4px;\n  flex-shrink: 0;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(.plus) {\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty .line {\n  width: 2px;\n  height: 16px;\n  background-color: #8892b3;\n  border-radius: 1px;\n  transform: rotate(45deg);\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus {\n  margin-bottom: 4px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus .uc-icon {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(:first-child):not(:nth-child(9)) {\n  margin-left: 8px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item .uc-icon {\n  position: absolute;\n  right: -8px;\n  top: -3px;\n  opacity: 0;\n  transition: opacity 0.3s;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:hover .uc-icon {\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #8892b3;\n  border-radius: 50%;\n}\n\n/*# sourceMappingURL=index.vue.map */", map: {"version":3,"sources":["/Users/zhengying/project/open_source_code/vue-color-gradient-picker/src/lib/components/ColorPicker/index.vue","index.vue"],"names":[],"mappings":"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","file":"index.vue","sourcesContent":["<template>\n  <div class=\"ui-color-picker\">\n    <Gradient\n      v-if=\"isGradient\"\n      :points=\"gradient.points\"\n      :type=\"gradient.type\"\n      :degree=\"gradient.degree\"\n      :onChange=\"onChange\"\n      :onStartChange=\"onStartChange\"\n      :onEndChange=\"onEndChange\"\n    />\n\n    <Solid\n      v-else\n      :red=\"color.red\"\n      :green=\"color.green\"\n      :blue=\"color.blue\"\n      :alpha=\"color.alpha\"\n      :hue=\"color.hue\"\n      :saturation=\"color.saturation\"\n      :value=\"color.value\"\n      :onChange=\"onChange\"\n      :onStartChange=\"onStartChange\"\n      :onEndChange=\"onEndChange\"\n    />\n  </div>\n</template>\n\n<script src=\"./script.js\" />\n<style lang=\"scss\" >\n* {\n  box-sizing: border-box;\n}\n\n.ui-color-picker {\n  margin: 8px;\n  background-color: #ffffff;\n  display: flex;\n  flex-direction: column;\n  width: 280px;\n  user-select: none;\n\n  .gradient-controls {\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    width: 100%;\n    margin-bottom: 8px;\n    height: 24px;\n    padding: 0 16px;\n\n    .gradient-type {\n      flex: 1;\n      display: flex;\n\n      .gradient-type-item {\n        height: 28px;\n        width: 28px;\n        border-radius: 50%;\n        position: relative;\n        cursor: pointer;\n\n        &.active {\n          &::after {\n            content: \"\";\n            display: block;\n            position: absolute;\n            top: -3px;\n            bottom: -3px;\n            left: -3px;\n            right: -3px;\n            border: 2px solid #1f2667;\n            border-radius: 50%;\n          }\n        }\n\n        &.liner-gradient {\n          background: linear-gradient(270deg, #ffffff 0%, #1f2667 100%);\n        }\n\n        &.radial-gradient {\n          margin-left: 8px;\n          background: radial-gradient(circle, #ffffff 0%, #1f2667 100%);\n        }\n      }\n    }\n\n    .gradient-degrees-options {\n      position: relative;\n\n      .gradient-degrees {\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-pack: center;\n        -ms-flex-pack: center;\n        justify-content: center;\n        -webkit-box-align: center;\n        -ms-flex-align: center;\n        align-items: center;\n        position: relative;\n        width: 28px;\n        height: 28px;\n        border: 3px solid #1f2667;\n        border-radius: 18px;\n        margin-right: 54px;\n\n        .gradient-degree-center {\n          position: relative;\n          width: 6px;\n          height: 22px;\n          pointer-events: none;\n\n          .gradient-degree-pointer {\n            position: absolute;\n            width: 6px;\n            height: 6px;\n            top: 2px;\n            border-radius: 3px;\n            background: #1f2667;\n          }\n        }\n      }\n\n      .gradient-degree-value {\n        position: absolute;\n        top: 0;\n        right: 0;\n        width: 48px;\n        height: 28px;\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        border: 1px solid #bbbfc5;\n        border-radius: 6px;\n\n        p {\n          text-align: center;\n          padding: 0 6px;\n        }\n      }\n    }\n  }\n\n  .picker-area {\n    display: flex;\n    flex-direction: column;\n    padding: 0 16px;\n\n    &.gradient-tab {\n      .picking-area {\n        margin-bottom: 10px;\n      }\n    }\n\n    .picking-area {\n      width: 100%;\n      height: 160px;\n      margin-bottom: 16px;\n      position: relative;\n      border-radius: 8px;\n\n      &:hover {\n        cursor: default;\n      }\n\n      .picking-area-overlay1 {\n        height: 100%;\n        width: 100%;\n        background: linear-gradient(\n          to right,\n          white 0%,\n          rgba(255, 255, 255, 0) 100%\n        );\n        border-radius: 3px;\n\n        .picking-area-overlay2 {\n          height: 100%;\n          width: 100%;\n          background: linear-gradient(\n            to bottom,\n            rgba(0, 0, 0, 0) 0%,\n            black 100%\n          );\n          border-radius: 8px;\n        }\n      }\n    }\n\n    .preview {\n      display: flex;\n      flex-direction: row;\n      margin-bottom: 16px;\n\n      .preview-box {\n        box-sizing: border-box;\n        height: 36px;\n        width: 36px;\n        border-radius: 8px;\n        border: 1px solid #ebedf5;\n      }\n\n      .color-hue-alpha {\n        display: flex;\n        flex-direction: column;\n        flex: 1;\n        margin-left: 6px;\n\n        .hue {\n          width: 100%;\n          position: relative;\n          border-radius: 10px;\n          margin-bottom: 8px;\n          padding: 0 7px;\n          background-color: red;\n          cursor: pointer;\n\n          .hue-area {\n            position: relative;\n            height: 14px;\n            background: -webkit-linear-gradient(\n              left,\n              #ff0000,\n              #ff0080,\n              #ff00ff,\n              #8000ff,\n              #0000ff,\n              #0080ff,\n              #00ffff,\n              #00ff80,\n              #00ff00,\n              #80ff00,\n              #ffff00,\n              #ff8000,\n              #ff0000\n            );\n            background: -o-linear-gradient(\n              left,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n            background: -ms-linear-gradient(\n              left,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n            background: -moz-linear-gradient(\n              left,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n            background: linear-gradient(\n              to right,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n          }\n        }\n\n        .alpha {\n          position: relative;\n          width: 100%;\n          overflow: hidden;\n          border-radius: 10px;\n          height: 14px;\n          cursor: pointer;\n\n          .gradient {\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n          }\n\n          .alpha-area {\n            width: 100%;\n            height: 100%;\n            background: url(\"../../assets/images/alpha-background.svg\");\n            background-size: auto;\n            background-position: 50% 50%;\n            border-radius: 10px;\n            padding: 0 7px;\n\n            .alpha-mask {\n              width: 100%;\n              height: 100%;\n              position: relative;\n            }\n          }\n        }\n      }\n    }\n\n    .gradient {\n      width: 100%;\n      height: 14px;\n      position: relative;\n      cursor: pointer;\n      border-radius: 10px;\n      margin-bottom: 8px;\n      padding: 0 7px;\n\n      .gradient-slider-container {\n        height: 100%;\n        width: 100%;\n        position: relative;\n      }\n    }\n\n    .picker-pointer {\n      position: absolute;\n      top: 1px;\n      height: 12px;\n      width: 12px;\n      border: 1px solid #ffffff;\n      background: transparent;\n      border-radius: 50%;\n      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);\n\n      .child-point {\n        position: absolute;\n        top: 50%;\n        left: 50%;\n        transform: translate(-50%, -50%);\n        height: 3px;\n        width: 3px;\n        background: #ffffff;\n        border-radius: 50%;\n        opacity: 0;\n        transition: opacity 0.33s;\n\n        &.active {\n          opacity: 1;\n        }\n      }\n    }\n  }\n\n  .color-preview-area {\n    margin-bottom: 8px;\n    padding: 0 16px;\n\n    .input-group {\n      width: 100%;\n      display: flex;\n      flex-direction: row;\n      justify-content: space-between;\n\n      .uc-field-group:not(:last-child) {\n        margin-right: 7px;\n      }\n    }\n\n    .hex {\n      width: 65px;\n    }\n\n    .rgb {\n      width: 40px;\n    }\n  }\n\n  .colors {\n    padding: 3px 16px 0;\n\n    .colors-label {\n      display: flex;\n      align-items: center;\n      margin-bottom: 4px;\n      cursor: pointer;\n\n      .uc-icon {\n        margin-right: 8px;\n        transition: transform 0.3s;\n      }\n\n      .tp-text {\n        text-transform: uppercase;\n      }\n\n      &.show {\n        & + .colors-item-container {\n          max-height: 80px;\n          padding-bottom: 16px;\n        }\n\n        .uc-icon {\n          transform: rotate(-90deg);\n        }\n      }\n    }\n\n    .template {\n      display: flex;\n      flex-direction: column;\n    }\n\n    .global {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n    }\n\n    .colors-item-container {\n      display: flex;\n      flex-wrap: wrap;\n      width: 100%;\n      transition: max-height 0.3s, padding-bottom 0.3s;\n      max-height: 0;\n      overflow: hidden;\n\n      .colors-item {\n        height: 24px;\n        width: 24px;\n        border-radius: 50%;\n        background-color: #ebedf5;\n        cursor: pointer;\n        position: relative;\n        margin-top: 4px;\n        flex-shrink: 0;\n\n        &:not(.plus) {\n          border: 1px solid #ebedf5;\n        }\n\n        &.empty {\n          display: flex;\n          align-items: center;\n          justify-content: center;\n\n          .line {\n            width: 2px;\n            height: 16px;\n            background-color: #8892b3;\n            border-radius: 1px;\n            transform: rotate(45deg);\n          }\n        }\n\n        &.plus {\n          margin-bottom: 4px;\n\n          .uc-icon {\n            position: absolute;\n            top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%);\n            opacity: 1;\n          }\n        }\n\n        &:not(:first-child):not(:nth-child(9)) {\n          margin-left: 8px;\n        }\n\n        .uc-icon {\n          position: absolute;\n          right: -8px;\n          top: -3px;\n          opacity: 0;\n          transition: opacity 0.3s;\n        }\n\n        &:hover {\n          .uc-icon {\n            opacity: 1;\n          }\n        }\n\n        &.active {\n          &::after {\n            content: \"\";\n            display: block;\n            position: absolute;\n            top: -3px;\n            bottom: -3px;\n            left: -3px;\n            right: -3px;\n            border: 2px solid #8892b3;\n            border-radius: 50%;\n          }\n        }\n      }\n    }\n  }\n}\n</style>\n","* {\n  box-sizing: border-box;\n}\n\n.ui-color-picker {\n  margin: 8px;\n  background-color: #ffffff;\n  display: flex;\n  flex-direction: column;\n  width: 280px;\n  user-select: none;\n}\n.ui-color-picker .gradient-controls {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 8px;\n  height: 24px;\n  padding: 0 16px;\n}\n.ui-color-picker .gradient-controls .gradient-type {\n  flex: 1;\n  display: flex;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item {\n  height: 28px;\n  width: 28px;\n  border-radius: 50%;\n  position: relative;\n  cursor: pointer;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #1f2667;\n  border-radius: 50%;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.liner-gradient {\n  background: linear-gradient(270deg, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.radial-gradient {\n  margin-left: 8px;\n  background: radial-gradient(circle, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options {\n  position: relative;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees {\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n  position: relative;\n  width: 28px;\n  height: 28px;\n  border: 3px solid #1f2667;\n  border-radius: 18px;\n  margin-right: 54px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center {\n  position: relative;\n  width: 6px;\n  height: 22px;\n  pointer-events: none;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center .gradient-degree-pointer {\n  position: absolute;\n  width: 6px;\n  height: 6px;\n  top: 2px;\n  border-radius: 3px;\n  background: #1f2667;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 48px;\n  height: 28px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #bbbfc5;\n  border-radius: 6px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value p {\n  text-align: center;\n  padding: 0 6px;\n}\n.ui-color-picker .picker-area {\n  display: flex;\n  flex-direction: column;\n  padding: 0 16px;\n}\n.ui-color-picker .picker-area.gradient-tab .picking-area {\n  margin-bottom: 10px;\n}\n.ui-color-picker .picker-area .picking-area {\n  width: 100%;\n  height: 160px;\n  margin-bottom: 16px;\n  position: relative;\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .picking-area:hover {\n  cursor: default;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);\n  border-radius: 3px;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 .picking-area-overlay2 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, black 100%);\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .preview {\n  display: flex;\n  flex-direction: row;\n  margin-bottom: 16px;\n}\n.ui-color-picker .picker-area .preview .preview-box {\n  box-sizing: border-box;\n  height: 36px;\n  width: 36px;\n  border-radius: 8px;\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  margin-left: 6px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue {\n  width: 100%;\n  position: relative;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n  background-color: red;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue .hue-area {\n  position: relative;\n  height: 14px;\n  background: -webkit-linear-gradient(left, #ff0000, #ff0080, #ff00ff, #8000ff, #0000ff, #0080ff, #00ffff, #00ff80, #00ff00, #80ff00, #ffff00, #ff8000, #ff0000);\n  background: -o-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -ms-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -moz-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n  border-radius: 10px;\n  height: 14px;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .gradient {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area {\n  width: 100%;\n  height: 100%;\n  background: url(\"../../assets/images/alpha-background.svg\");\n  background-size: auto;\n  background-position: 50% 50%;\n  border-radius: 10px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area .alpha-mask {\n  width: 100%;\n  height: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .gradient {\n  width: 100%;\n  height: 14px;\n  position: relative;\n  cursor: pointer;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .gradient .gradient-slider-container {\n  height: 100%;\n  width: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .picker-pointer {\n  position: absolute;\n  top: 1px;\n  height: 12px;\n  width: 12px;\n  border: 1px solid #ffffff;\n  background: transparent;\n  border-radius: 50%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);\n}\n.ui-color-picker .picker-area .picker-pointer .child-point {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  height: 3px;\n  width: 3px;\n  background: #ffffff;\n  border-radius: 50%;\n  opacity: 0;\n  transition: opacity 0.33s;\n}\n.ui-color-picker .picker-area .picker-pointer .child-point.active {\n  opacity: 1;\n}\n.ui-color-picker .color-preview-area {\n  margin-bottom: 8px;\n  padding: 0 16px;\n}\n.ui-color-picker .color-preview-area .input-group {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n}\n.ui-color-picker .color-preview-area .input-group .uc-field-group:not(:last-child) {\n  margin-right: 7px;\n}\n.ui-color-picker .color-preview-area .hex {\n  width: 65px;\n}\n.ui-color-picker .color-preview-area .rgb {\n  width: 40px;\n}\n.ui-color-picker .colors {\n  padding: 3px 16px 0;\n}\n.ui-color-picker .colors .colors-label {\n  display: flex;\n  align-items: center;\n  margin-bottom: 4px;\n  cursor: pointer;\n}\n.ui-color-picker .colors .colors-label .uc-icon {\n  margin-right: 8px;\n  transition: transform 0.3s;\n}\n.ui-color-picker .colors .colors-label .tp-text {\n  text-transform: uppercase;\n}\n.ui-color-picker .colors .colors-label.show + .colors-item-container {\n  max-height: 80px;\n  padding-bottom: 16px;\n}\n.ui-color-picker .colors .colors-label.show .uc-icon {\n  transform: rotate(-90deg);\n}\n.ui-color-picker .colors .template {\n  display: flex;\n  flex-direction: column;\n}\n.ui-color-picker .colors .global {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n.ui-color-picker .colors .colors-item-container {\n  display: flex;\n  flex-wrap: wrap;\n  width: 100%;\n  transition: max-height 0.3s, padding-bottom 0.3s;\n  max-height: 0;\n  overflow: hidden;\n}\n.ui-color-picker .colors .colors-item-container .colors-item {\n  height: 24px;\n  width: 24px;\n  border-radius: 50%;\n  background-color: #ebedf5;\n  cursor: pointer;\n  position: relative;\n  margin-top: 4px;\n  flex-shrink: 0;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(.plus) {\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty .line {\n  width: 2px;\n  height: 16px;\n  background-color: #8892b3;\n  border-radius: 1px;\n  transform: rotate(45deg);\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus {\n  margin-bottom: 4px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus .uc-icon {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(:first-child):not(:nth-child(9)) {\n  margin-left: 8px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item .uc-icon {\n  position: absolute;\n  right: -8px;\n  top: -3px;\n  opacity: 0;\n  transition: opacity 0.3s;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:hover .uc-icon {\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #8892b3;\n  border-radius: 50%;\n}\n\n/*# sourceMappingURL=index.vue.map */"]}, media: undefined });
+    inject("data-v-7701e26a_0", { source: "* {\n  box-sizing: border-box;\n}\n.ui-color-picker {\n  margin: 8px;\n  background-color: #ffffff;\n  display: flex;\n  flex-direction: column;\n  width: 280px;\n  user-select: none;\n}\n.ui-color-picker .gradient-controls {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 8px;\n  height: 24px;\n  padding: 0 16px;\n}\n.ui-color-picker .gradient-controls .gradient-type {\n  flex: 1;\n  display: flex;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item {\n  height: 28px;\n  width: 28px;\n  border-radius: 50%;\n  position: relative;\n  cursor: pointer;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #1f2667;\n  border-radius: 50%;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.liner-gradient {\n  background: linear-gradient(270deg, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.radial-gradient {\n  margin-left: 8px;\n  background: radial-gradient(circle, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options {\n  position: relative;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees {\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n  position: relative;\n  width: 28px;\n  height: 28px;\n  border: 3px solid #1f2667;\n  border-radius: 18px;\n  margin-right: 54px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center {\n  position: relative;\n  width: 6px;\n  height: 22px;\n  pointer-events: none;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center .gradient-degree-pointer {\n  position: absolute;\n  width: 6px;\n  height: 6px;\n  top: 2px;\n  border-radius: 3px;\n  background: #1f2667;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 48px;\n  height: 28px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #bbbfc5;\n  border-radius: 6px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value p {\n  text-align: center;\n  padding: 0 6px;\n}\n.ui-color-picker .picker-area {\n  display: flex;\n  flex-direction: column;\n  padding: 0 16px;\n}\n.ui-color-picker .picker-area.gradient-tab .picking-area {\n  margin-bottom: 10px;\n}\n.ui-color-picker .picker-area .picking-area {\n  width: 100%;\n  height: 160px;\n  margin-bottom: 16px;\n  position: relative;\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .picking-area:hover {\n  cursor: default;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);\n  border-radius: 3px;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 .picking-area-overlay2 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, black 100%);\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .preview {\n  display: flex;\n  flex-direction: row;\n  margin-bottom: 16px;\n}\n.ui-color-picker .picker-area .preview .preview-box {\n  box-sizing: border-box;\n  height: 36px;\n  width: 36px;\n  border-radius: 8px;\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  margin-left: 6px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue {\n  width: 100%;\n  position: relative;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n  background-color: red;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue .hue-area {\n  position: relative;\n  height: 14px;\n  background: -webkit-linear-gradient(left, #ff0000, #ff0080, #ff00ff, #8000ff, #0000ff, #0080ff, #00ffff, #00ff80, #00ff00, #80ff00, #ffff00, #ff8000, #ff0000);\n  background: -o-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -ms-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -moz-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n  border-radius: 10px;\n  height: 14px;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .gradient {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area {\n  width: 100%;\n  height: 100%;\n  background: url(\"../../assets/images/alpha-background.svg\");\n  background-size: auto;\n  background-position: 50% 50%;\n  border-radius: 10px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area .alpha-mask {\n  width: 100%;\n  height: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .gradient {\n  width: 100%;\n  height: 14px;\n  position: relative;\n  cursor: pointer;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .gradient .gradient-slider-container {\n  height: 100%;\n  width: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .picker-pointer {\n  position: absolute;\n  top: 1px;\n  height: 12px;\n  width: 12px;\n  border: 1px solid #ffffff;\n  background: transparent;\n  border-radius: 50%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);\n}\n.ui-color-picker .picker-area .picker-pointer .child-point {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  height: 3px;\n  width: 3px;\n  background: #ffffff;\n  border-radius: 50%;\n  opacity: 0;\n  transition: opacity 0.33s;\n}\n.ui-color-picker .picker-area .picker-pointer .child-point.active {\n  opacity: 1;\n}\n.ui-color-picker .color-preview-area {\n  margin-bottom: 8px;\n  padding: 0 16px;\n}\n.ui-color-picker .color-preview-area .input-group {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n}\n.ui-color-picker .color-preview-area .input-group .uc-field-group:not(:last-child) {\n  margin-right: 7px;\n}\n.ui-color-picker .color-preview-area .hex {\n  width: 65px;\n}\n.ui-color-picker .color-preview-area .rgb {\n  width: 40px;\n}\n.ui-color-picker .colors {\n  padding: 3px 16px 0;\n}\n.ui-color-picker .colors .colors-label {\n  display: flex;\n  align-items: center;\n  margin-bottom: 4px;\n  cursor: pointer;\n}\n.ui-color-picker .colors .colors-label .uc-icon {\n  margin-right: 8px;\n  transition: transform 0.3s;\n}\n.ui-color-picker .colors .colors-label .tp-text {\n  text-transform: uppercase;\n}\n.ui-color-picker .colors .colors-label.show + .colors-item-container {\n  max-height: 80px;\n  padding-bottom: 16px;\n}\n.ui-color-picker .colors .colors-label.show .uc-icon {\n  transform: rotate(-90deg);\n}\n.ui-color-picker .colors .template {\n  display: flex;\n  flex-direction: column;\n}\n.ui-color-picker .colors .global {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n.ui-color-picker .colors .colors-item-container {\n  display: flex;\n  flex-wrap: wrap;\n  width: 100%;\n  transition: max-height 0.3s, padding-bottom 0.3s;\n  max-height: 0;\n  overflow: hidden;\n}\n.ui-color-picker .colors .colors-item-container .colors-item {\n  height: 24px;\n  width: 24px;\n  border-radius: 50%;\n  background-color: #ebedf5;\n  cursor: pointer;\n  position: relative;\n  margin-top: 4px;\n  flex-shrink: 0;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(.plus) {\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty .line {\n  width: 2px;\n  height: 16px;\n  background-color: #8892b3;\n  border-radius: 1px;\n  transform: rotate(45deg);\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus {\n  margin-bottom: 4px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus .uc-icon {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(:first-child):not(:nth-child(9)) {\n  margin-left: 8px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item .uc-icon {\n  position: absolute;\n  right: -8px;\n  top: -3px;\n  opacity: 0;\n  transition: opacity 0.3s;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:hover .uc-icon {\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #8892b3;\n  border-radius: 50%;\n}\n\n/*# sourceMappingURL=index.vue.map */", map: {"version":3,"sources":["/Users/zhengying/project/open_source_code/vue-color-gradient-picker/src/lib/components/ColorPicker/index.vue","index.vue"],"names":[],"mappings":"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","file":"index.vue","sourcesContent":["<template>\n  <div class=\"ui-color-picker\">\n    <Gradient\n      v-if=\"isGradient\"\n      :canAddGradientPoint=\"canAddGradientPoint\"\n      :points=\"gradient.points\"\n      :type=\"gradient.type\"\n      :degree=\"gradient.degree\"\n      :onChange=\"onChange\"\n      :onStartChange=\"onStartChange\"\n      :onEndChange=\"onEndChange\"\n    />\n\n    <Solid\n      v-else\n      :red=\"color.red\"\n      :green=\"color.green\"\n      :blue=\"color.blue\"\n      :alpha=\"color.alpha\"\n      :hue=\"color.hue\"\n      :saturation=\"color.saturation\"\n      :value=\"color.value\"\n      :onChange=\"onChange\"\n      :onStartChange=\"onStartChange\"\n      :onEndChange=\"onEndChange\"\n    />\n  </div>\n</template>\n\n<script src=\"./script.js\" />\n<style lang=\"scss\" >\n* {\n  box-sizing: border-box;\n}\n\n.ui-color-picker {\n  margin: 8px;\n  background-color: #ffffff;\n  display: flex;\n  flex-direction: column;\n  width: 280px;\n  user-select: none;\n\n  .gradient-controls {\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    width: 100%;\n    margin-bottom: 8px;\n    height: 24px;\n    padding: 0 16px;\n\n    .gradient-type {\n      flex: 1;\n      display: flex;\n\n      .gradient-type-item {\n        height: 28px;\n        width: 28px;\n        border-radius: 50%;\n        position: relative;\n        cursor: pointer;\n\n        &.active {\n          &::after {\n            content: \"\";\n            display: block;\n            position: absolute;\n            top: -3px;\n            bottom: -3px;\n            left: -3px;\n            right: -3px;\n            border: 2px solid #1f2667;\n            border-radius: 50%;\n          }\n        }\n\n        &.liner-gradient {\n          background: linear-gradient(270deg, #ffffff 0%, #1f2667 100%);\n        }\n\n        &.radial-gradient {\n          margin-left: 8px;\n          background: radial-gradient(circle, #ffffff 0%, #1f2667 100%);\n        }\n      }\n    }\n\n    .gradient-degrees-options {\n      position: relative;\n\n      .gradient-degrees {\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-pack: center;\n        -ms-flex-pack: center;\n        justify-content: center;\n        -webkit-box-align: center;\n        -ms-flex-align: center;\n        align-items: center;\n        position: relative;\n        width: 28px;\n        height: 28px;\n        border: 3px solid #1f2667;\n        border-radius: 18px;\n        margin-right: 54px;\n\n        .gradient-degree-center {\n          position: relative;\n          width: 6px;\n          height: 22px;\n          pointer-events: none;\n\n          .gradient-degree-pointer {\n            position: absolute;\n            width: 6px;\n            height: 6px;\n            top: 2px;\n            border-radius: 3px;\n            background: #1f2667;\n          }\n        }\n      }\n\n      .gradient-degree-value {\n        position: absolute;\n        top: 0;\n        right: 0;\n        width: 48px;\n        height: 28px;\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        border: 1px solid #bbbfc5;\n        border-radius: 6px;\n\n        p {\n          text-align: center;\n          padding: 0 6px;\n        }\n      }\n    }\n  }\n\n  .picker-area {\n    display: flex;\n    flex-direction: column;\n    padding: 0 16px;\n\n    &.gradient-tab {\n      .picking-area {\n        margin-bottom: 10px;\n      }\n    }\n\n    .picking-area {\n      width: 100%;\n      height: 160px;\n      margin-bottom: 16px;\n      position: relative;\n      border-radius: 8px;\n\n      &:hover {\n        cursor: default;\n      }\n\n      .picking-area-overlay1 {\n        height: 100%;\n        width: 100%;\n        background: linear-gradient(\n          to right,\n          white 0%,\n          rgba(255, 255, 255, 0) 100%\n        );\n        border-radius: 3px;\n\n        .picking-area-overlay2 {\n          height: 100%;\n          width: 100%;\n          background: linear-gradient(\n            to bottom,\n            rgba(0, 0, 0, 0) 0%,\n            black 100%\n          );\n          border-radius: 8px;\n        }\n      }\n    }\n\n    .preview {\n      display: flex;\n      flex-direction: row;\n      margin-bottom: 16px;\n\n      .preview-box {\n        box-sizing: border-box;\n        height: 36px;\n        width: 36px;\n        border-radius: 8px;\n        border: 1px solid #ebedf5;\n      }\n\n      .color-hue-alpha {\n        display: flex;\n        flex-direction: column;\n        flex: 1;\n        margin-left: 6px;\n\n        .hue {\n          width: 100%;\n          position: relative;\n          border-radius: 10px;\n          margin-bottom: 8px;\n          padding: 0 7px;\n          background-color: red;\n          cursor: pointer;\n\n          .hue-area {\n            position: relative;\n            height: 14px;\n            background: -webkit-linear-gradient(\n              left,\n              #ff0000,\n              #ff0080,\n              #ff00ff,\n              #8000ff,\n              #0000ff,\n              #0080ff,\n              #00ffff,\n              #00ff80,\n              #00ff00,\n              #80ff00,\n              #ffff00,\n              #ff8000,\n              #ff0000\n            );\n            background: -o-linear-gradient(\n              left,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n            background: -ms-linear-gradient(\n              left,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n            background: -moz-linear-gradient(\n              left,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n            background: linear-gradient(\n              to right,\n              #ff0000,\n              #ff8000,\n              #ffff00,\n              #80ff00,\n              #00ff00,\n              #00ff80,\n              #00ffff,\n              #0080ff,\n              #0000ff,\n              #8000ff,\n              #ff00ff,\n              #ff0080,\n              #ff0000\n            );\n          }\n        }\n\n        .alpha {\n          position: relative;\n          width: 100%;\n          overflow: hidden;\n          border-radius: 10px;\n          height: 14px;\n          cursor: pointer;\n\n          .gradient {\n            position: absolute;\n            top: 0;\n            left: 0;\n            right: 0;\n            bottom: 0;\n          }\n\n          .alpha-area {\n            width: 100%;\n            height: 100%;\n            background: url(\"../../assets/images/alpha-background.svg\");\n            background-size: auto;\n            background-position: 50% 50%;\n            border-radius: 10px;\n            padding: 0 7px;\n\n            .alpha-mask {\n              width: 100%;\n              height: 100%;\n              position: relative;\n            }\n          }\n        }\n      }\n    }\n\n    .gradient {\n      width: 100%;\n      height: 14px;\n      position: relative;\n      cursor: pointer;\n      border-radius: 10px;\n      margin-bottom: 8px;\n      padding: 0 7px;\n\n      .gradient-slider-container {\n        height: 100%;\n        width: 100%;\n        position: relative;\n      }\n    }\n\n    .picker-pointer {\n      position: absolute;\n      top: 1px;\n      height: 12px;\n      width: 12px;\n      border: 1px solid #ffffff;\n      background: transparent;\n      border-radius: 50%;\n      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);\n\n      .child-point {\n        position: absolute;\n        top: 50%;\n        left: 50%;\n        transform: translate(-50%, -50%);\n        height: 3px;\n        width: 3px;\n        background: #ffffff;\n        border-radius: 50%;\n        opacity: 0;\n        transition: opacity 0.33s;\n\n        &.active {\n          opacity: 1;\n        }\n      }\n    }\n  }\n\n  .color-preview-area {\n    margin-bottom: 8px;\n    padding: 0 16px;\n\n    .input-group {\n      width: 100%;\n      display: flex;\n      flex-direction: row;\n      justify-content: space-between;\n\n      .uc-field-group:not(:last-child) {\n        margin-right: 7px;\n      }\n    }\n\n    .hex {\n      width: 65px;\n    }\n\n    .rgb {\n      width: 40px;\n    }\n  }\n\n  .colors {\n    padding: 3px 16px 0;\n\n    .colors-label {\n      display: flex;\n      align-items: center;\n      margin-bottom: 4px;\n      cursor: pointer;\n\n      .uc-icon {\n        margin-right: 8px;\n        transition: transform 0.3s;\n      }\n\n      .tp-text {\n        text-transform: uppercase;\n      }\n\n      &.show {\n        & + .colors-item-container {\n          max-height: 80px;\n          padding-bottom: 16px;\n        }\n\n        .uc-icon {\n          transform: rotate(-90deg);\n        }\n      }\n    }\n\n    .template {\n      display: flex;\n      flex-direction: column;\n    }\n\n    .global {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-start;\n    }\n\n    .colors-item-container {\n      display: flex;\n      flex-wrap: wrap;\n      width: 100%;\n      transition: max-height 0.3s, padding-bottom 0.3s;\n      max-height: 0;\n      overflow: hidden;\n\n      .colors-item {\n        height: 24px;\n        width: 24px;\n        border-radius: 50%;\n        background-color: #ebedf5;\n        cursor: pointer;\n        position: relative;\n        margin-top: 4px;\n        flex-shrink: 0;\n\n        &:not(.plus) {\n          border: 1px solid #ebedf5;\n        }\n\n        &.empty {\n          display: flex;\n          align-items: center;\n          justify-content: center;\n\n          .line {\n            width: 2px;\n            height: 16px;\n            background-color: #8892b3;\n            border-radius: 1px;\n            transform: rotate(45deg);\n          }\n        }\n\n        &.plus {\n          margin-bottom: 4px;\n\n          .uc-icon {\n            position: absolute;\n            top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%);\n            opacity: 1;\n          }\n        }\n\n        &:not(:first-child):not(:nth-child(9)) {\n          margin-left: 8px;\n        }\n\n        .uc-icon {\n          position: absolute;\n          right: -8px;\n          top: -3px;\n          opacity: 0;\n          transition: opacity 0.3s;\n        }\n\n        &:hover {\n          .uc-icon {\n            opacity: 1;\n          }\n        }\n\n        &.active {\n          &::after {\n            content: \"\";\n            display: block;\n            position: absolute;\n            top: -3px;\n            bottom: -3px;\n            left: -3px;\n            right: -3px;\n            border: 2px solid #8892b3;\n            border-radius: 50%;\n          }\n        }\n      }\n    }\n  }\n}\n</style>\n","* {\n  box-sizing: border-box;\n}\n\n.ui-color-picker {\n  margin: 8px;\n  background-color: #ffffff;\n  display: flex;\n  flex-direction: column;\n  width: 280px;\n  user-select: none;\n}\n.ui-color-picker .gradient-controls {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 8px;\n  height: 24px;\n  padding: 0 16px;\n}\n.ui-color-picker .gradient-controls .gradient-type {\n  flex: 1;\n  display: flex;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item {\n  height: 28px;\n  width: 28px;\n  border-radius: 50%;\n  position: relative;\n  cursor: pointer;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #1f2667;\n  border-radius: 50%;\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.liner-gradient {\n  background: linear-gradient(270deg, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-type .gradient-type-item.radial-gradient {\n  margin-left: 8px;\n  background: radial-gradient(circle, #ffffff 0%, #1f2667 100%);\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options {\n  position: relative;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees {\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n  position: relative;\n  width: 28px;\n  height: 28px;\n  border: 3px solid #1f2667;\n  border-radius: 18px;\n  margin-right: 54px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center {\n  position: relative;\n  width: 6px;\n  height: 22px;\n  pointer-events: none;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degrees .gradient-degree-center .gradient-degree-pointer {\n  position: absolute;\n  width: 6px;\n  height: 6px;\n  top: 2px;\n  border-radius: 3px;\n  background: #1f2667;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 48px;\n  height: 28px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid #bbbfc5;\n  border-radius: 6px;\n}\n.ui-color-picker .gradient-controls .gradient-degrees-options .gradient-degree-value p {\n  text-align: center;\n  padding: 0 6px;\n}\n.ui-color-picker .picker-area {\n  display: flex;\n  flex-direction: column;\n  padding: 0 16px;\n}\n.ui-color-picker .picker-area.gradient-tab .picking-area {\n  margin-bottom: 10px;\n}\n.ui-color-picker .picker-area .picking-area {\n  width: 100%;\n  height: 160px;\n  margin-bottom: 16px;\n  position: relative;\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .picking-area:hover {\n  cursor: default;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);\n  border-radius: 3px;\n}\n.ui-color-picker .picker-area .picking-area .picking-area-overlay1 .picking-area-overlay2 {\n  height: 100%;\n  width: 100%;\n  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, black 100%);\n  border-radius: 8px;\n}\n.ui-color-picker .picker-area .preview {\n  display: flex;\n  flex-direction: row;\n  margin-bottom: 16px;\n}\n.ui-color-picker .picker-area .preview .preview-box {\n  box-sizing: border-box;\n  height: 36px;\n  width: 36px;\n  border-radius: 8px;\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  margin-left: 6px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue {\n  width: 100%;\n  position: relative;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n  background-color: red;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .hue .hue-area {\n  position: relative;\n  height: 14px;\n  background: -webkit-linear-gradient(left, #ff0000, #ff0080, #ff00ff, #8000ff, #0000ff, #0080ff, #00ffff, #00ff80, #00ff00, #80ff00, #ffff00, #ff8000, #ff0000);\n  background: -o-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -ms-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: -moz-linear-gradient(left, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n  background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n  border-radius: 10px;\n  height: 14px;\n  cursor: pointer;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .gradient {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area {\n  width: 100%;\n  height: 100%;\n  background: url(\"../../assets/images/alpha-background.svg\");\n  background-size: auto;\n  background-position: 50% 50%;\n  border-radius: 10px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .preview .color-hue-alpha .alpha .alpha-area .alpha-mask {\n  width: 100%;\n  height: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .gradient {\n  width: 100%;\n  height: 14px;\n  position: relative;\n  cursor: pointer;\n  border-radius: 10px;\n  margin-bottom: 8px;\n  padding: 0 7px;\n}\n.ui-color-picker .picker-area .gradient .gradient-slider-container {\n  height: 100%;\n  width: 100%;\n  position: relative;\n}\n.ui-color-picker .picker-area .picker-pointer {\n  position: absolute;\n  top: 1px;\n  height: 12px;\n  width: 12px;\n  border: 1px solid #ffffff;\n  background: transparent;\n  border-radius: 50%;\n  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);\n}\n.ui-color-picker .picker-area .picker-pointer .child-point {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  height: 3px;\n  width: 3px;\n  background: #ffffff;\n  border-radius: 50%;\n  opacity: 0;\n  transition: opacity 0.33s;\n}\n.ui-color-picker .picker-area .picker-pointer .child-point.active {\n  opacity: 1;\n}\n.ui-color-picker .color-preview-area {\n  margin-bottom: 8px;\n  padding: 0 16px;\n}\n.ui-color-picker .color-preview-area .input-group {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n}\n.ui-color-picker .color-preview-area .input-group .uc-field-group:not(:last-child) {\n  margin-right: 7px;\n}\n.ui-color-picker .color-preview-area .hex {\n  width: 65px;\n}\n.ui-color-picker .color-preview-area .rgb {\n  width: 40px;\n}\n.ui-color-picker .colors {\n  padding: 3px 16px 0;\n}\n.ui-color-picker .colors .colors-label {\n  display: flex;\n  align-items: center;\n  margin-bottom: 4px;\n  cursor: pointer;\n}\n.ui-color-picker .colors .colors-label .uc-icon {\n  margin-right: 8px;\n  transition: transform 0.3s;\n}\n.ui-color-picker .colors .colors-label .tp-text {\n  text-transform: uppercase;\n}\n.ui-color-picker .colors .colors-label.show + .colors-item-container {\n  max-height: 80px;\n  padding-bottom: 16px;\n}\n.ui-color-picker .colors .colors-label.show .uc-icon {\n  transform: rotate(-90deg);\n}\n.ui-color-picker .colors .template {\n  display: flex;\n  flex-direction: column;\n}\n.ui-color-picker .colors .global {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n}\n.ui-color-picker .colors .colors-item-container {\n  display: flex;\n  flex-wrap: wrap;\n  width: 100%;\n  transition: max-height 0.3s, padding-bottom 0.3s;\n  max-height: 0;\n  overflow: hidden;\n}\n.ui-color-picker .colors .colors-item-container .colors-item {\n  height: 24px;\n  width: 24px;\n  border-radius: 50%;\n  background-color: #ebedf5;\n  cursor: pointer;\n  position: relative;\n  margin-top: 4px;\n  flex-shrink: 0;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(.plus) {\n  border: 1px solid #ebedf5;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.empty .line {\n  width: 2px;\n  height: 16px;\n  background-color: #8892b3;\n  border-radius: 1px;\n  transform: rotate(45deg);\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus {\n  margin-bottom: 4px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.plus .uc-icon {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:not(:first-child):not(:nth-child(9)) {\n  margin-left: 8px;\n}\n.ui-color-picker .colors .colors-item-container .colors-item .uc-icon {\n  position: absolute;\n  right: -8px;\n  top: -3px;\n  opacity: 0;\n  transition: opacity 0.3s;\n}\n.ui-color-picker .colors .colors-item-container .colors-item:hover .uc-icon {\n  opacity: 1;\n}\n.ui-color-picker .colors .colors-item-container .colors-item.active::after {\n  content: \"\";\n  display: block;\n  position: absolute;\n  top: -3px;\n  bottom: -3px;\n  left: -3px;\n  right: -3px;\n  border: 2px solid #8892b3;\n  border-radius: 50%;\n}\n\n/*# sourceMappingURL=index.vue.map */"]}, media: undefined });
 
   };
   /* scoped */
