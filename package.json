@@ -1,5 +1,5 @@
 {
-  "name": "vue-color-gradient-picker",
+  "name": "dm-color-gradient-picker",
   "description": "pure and gradient picker",
   "version": "0.5.1",
   "main": "./dist/index-cjs.js",
