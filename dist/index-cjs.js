@@ -945,101 +945,116 @@ __vue_render__$3._withStripped = true;
   );
 
 var script$4 = {
-    name: "GradientPoint",
+  name: "GradientPoint",
 
-    props: {
-        point: Object,
-        activePointIndex: Number,
-        index: Number,
-        width: Number,
-        positions: Object,
-        changeActivePointIndex: Function,
-        updateGradientLeft: Function,
-        removePoint: Function,
-    },
+  props: {
+    point: Object,
+    activePointIndex: Number,
+    index: Number,
+    width: Number,
+    positions: Object,
+    changeActivePointIndex: Function,
+    updateGradientLeft: Function,
+    removePoint: Function,
+  },
 
-    data: function data() {
-        return {
-            mouseEvents: function () {},
-        }
-    },
-
-    mounted: function mounted() {
-        this.mouseEvents = useMouseEvents(this.mouseDownHandler, this.mouseMoveHandler, this.mouseUpHandler);
-    },
-
-    computed: {
-        activeClassName: function activeClassName() {
-            return this.activePointIndex === this.index ? ' active' : '';
-        },
-
-        pointStyle: function pointStyle() {
-            return { left: (((this.point.left * (this.width / 100)) - 6) + "px"), }
-        }
-    },
-
-    methods: {
-        mouseDownHandler: function mouseDownHandler(event) {
-            this.changeActivePointIndex(this.index);
-
-            var startX = event.pageX;
-            var startY = event.pageY;
-            var offsetX = startX - this.positions.x;
-
-            this.updateGradientLeft(this.point.left, this.index, 'onStartChange');
-
-            return {
-                startX: startX,
-                startY: startY,
-                offsetX: offsetX,
-
-            };
-        },
-
-        changeObjectPositions: function changeObjectPositions(event, ref) {
-            var startX = ref.startX;
-            var offsetX = ref.offsetX;
-
-            var moveX = event.pageX - startX;
-            offsetX += moveX;
-            // update point percent
-            var left = updateGradientActivePercent(offsetX, this.width);
-
-            return {
-                positions: {
-                    offsetX: offsetX,
-                    startX: event.pageX,
-                },
-                left: left,
-            };
-        },
-
-        mouseMoveHandler: function mouseMoveHandler(event, ref) {
-            var startX = ref.startX;
-            var offsetX = ref.offsetX;
-
-            var ref$1 = this.changeObjectPositions(event, { startX: startX, offsetX: offsetX });
-            var positions = ref$1.positions;
-            var left = ref$1.left;
-
-            this.updateGradientLeft(left, this.index, 'onChange');
-
-            return positions;
-        },
-
-        mouseUpHandler: function mouseUpHandler(event, ref) {
-            var startX = ref.startX;
-            var offsetX = ref.offsetX;
-
-            var ref$1 = this.changeObjectPositions(event, { startX: startX, offsetX: offsetX });
-            var positions = ref$1.positions;
-            var left = ref$1.left;
-
-            this.updateGradientLeft(left, this.index, 'onEndChange');
-
-            return positions;
-        },
+  data: function data() {
+    return {
+      mouseEvents: function () { },
     }
+  },
+
+  mounted: function mounted() {
+    this.mouseEvents = useMouseEvents(this.mouseDownHandler, this.mouseMoveHandler, this.mouseUpHandler);
+  },
+
+  computed: {
+    activeClassName: function activeClassName() {
+      return this.activePointIndex === this.index ? ' active' : '';
+    },
+
+    pointStyle: function pointStyle() {
+      return { left: (((this.point.left * (this.width / 100)) - 6) + "px"), }
+    }
+  },
+
+  methods: {
+    mouseDownHandler: function mouseDownHandler(event) {
+      event.stopPropagation();
+      this.changeActivePointIndex(this.index);
+
+      var startX = event.target.offsetLeft;
+      var startY = event.pageY;
+      var offsetX = startX - this.positions.x;
+
+      this.updateGradientLeft(this.point.left, this.index, 'onStartChange');
+
+      return {
+        startX: startX,
+        startY: startY,
+        offsetX: offsetX,
+        layerX: startX,
+        mouseStatus: 'down'
+      };
+    },
+
+    changeObjectPositions: function changeObjectPositions(event, ref) {
+      var offsetX = ref.offsetX;
+      var layerX = ref.layerX;
+
+      var newLayerX = event.layerX;
+
+      var moveX = newLayerX - layerX;
+      offsetX += moveX;
+      // update point percent
+      var left = updateGradientActivePercent(offsetX, this.width);
+
+      return {
+        positions: {
+          offsetX: offsetX,
+          startX: event.pageX,
+          layerX: newLayerX,
+          pageX: event.pageX
+        },
+        left: left,
+      };
+    },
+
+    mouseMoveHandler: function mouseMoveHandler(event, ref) {
+      var startX = ref.startX;
+      var offsetX = ref.offsetX;
+      var layerX = ref.layerX;
+
+      event.stopPropagation();
+      var ref$1 = this.changeObjectPositions(event, { startX: startX, offsetX: offsetX, layerX: layerX, mouseStatus: 'moving' });
+      var positions = ref$1.positions;
+      var left = ref$1.left;
+
+      this.updateGradientLeft(left, this.index, 'onChange');
+
+      return positions;
+    },
+
+    mouseUpHandler: function mouseUpHandler(event, ref) {
+      var startX = ref.startX;
+      var offsetX = ref.offsetX;
+      var layerX = ref.layerX;
+      var mouseStatus = ref.mouseStatus;
+
+      event.stopPropagation();
+      if (mouseStatus === 'down') {
+        // 没有moving，无需更新
+        return
+      }
+      var ref$1 = this.changeObjectPositions(event, { startX: startX, offsetX: offsetX, layerX: layerX, mouseStatus: 'up' });
+      var positions = ref$1.positions;
+      var left = ref$1.left;
+
+      this.updateGradientLeft(left, this.index, 'onEndChange');
+
+      return positions;
+    },
+  }
 };
 
 /* script */
@@ -1101,55 +1116,55 @@ __vue_render__$4._withStripped = true;
   );
 
 var script$5 = {
-    name: "index",
+  name: "index",
 
-    props: {
-        points: Array,
-        activePointIndex: Number,
-        changeActivePointIndex: Function,
-        updateGradientLeft: Function,
-        addPoint: Function,
-        removePoint: Function,
-    },
+  props: {
+    points: Array,
+    activePointIndex: Number,
+    changeActivePointIndex: Function,
+    updateGradientLeft: Function,
+    addPoint: Function,
+    removePoint: Function,
+  },
 
-    data: function data() {
-        return {
-            width: 0,
-            positions: { x: 0, y: 0 }
-        }
-    },
-
-    components: {
-        GradientPoint: __vue_component__$4
-    },
-
-    mounted: function mounted() {
-        var pointer = this.$refs.pointsContainerRef;
-
-        if (pointer) {
-            this.width = pointer.clientWidth;
-
-            var pointerPos = pointer.getBoundingClientRect();
-
-            this.positions = { x: pointerPos.x, y: pointerPos.y };
-        }
-    },
-
-    computed: {
-        pointsStyle: function pointsStyle() {
-            var style = generateGradientStyle(this.points, 'linear', 90);
-
-            return { background: style };
-        }
-    },
-
-    methods: {
-        pointsContainerClick: function pointsContainerClick(event) {
-            var left = updateGradientActivePercent(event.layerX, this.width);
-
-            this.addPoint(left);
-        },
+  data: function data() {
+    return {
+      width: 0,
+      positions: { x: 0, y: 0 }
     }
+  },
+
+  components: {
+    GradientPoint: __vue_component__$4
+  },
+
+  mounted: function mounted() {
+    var pointer = this.$refs.pointsContainerRef;
+
+    if (pointer) {
+      this.width = pointer.clientWidth;
+
+      // const pointerPos = pointer.getBoundingClientRect();
+
+      this.positions = { x: pointer.offsetLeft, y: pointer.offsetTop };
+    }
+  },
+
+  computed: {
+    pointsStyle: function pointsStyle() {
+      var style = generateGradientStyle(this.points, 'linear', 90);
+
+      return { background: style };
+    }
+  },
+
+  methods: {
+    pointsContainerClick: function pointsContainerClick(event) {
+      var left = updateGradientActivePercent(event.layerX, this.width);
+
+      this.addPoint(left);
+    },
+  }
 };
 
 /* script */
@@ -1165,7 +1180,7 @@ var __vue_render__$5 = function() {
     {
       staticClass: "gradient",
       style: _vm.pointsStyle,
-      on: { click: _vm.pointsContainerClick }
+      on: { mousedown: _vm.pointsContainerClick }
     },
     [
       _c(

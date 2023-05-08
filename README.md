@@ -1,22 +1,11 @@
-# Vue Color Gradient Picker
-
-## Table of Contents
-
-* [Installation](#installation)
-* [Examples](#examples)
-* [Demos](#demo)
+# Dm Color Picker
 
 ## Installation
 
 To install, you can use [npm](https://npmjs.org/) or [yarn](https://yarnpkg.com):
 
 
-    $ npm install vue-color-gradient-picker
-    $ yarn add vue-color-gradient-picker
-
-## Examples
-
-Here is a simple examples of react-color-gradient-picker being used in an app:
+    $ npm i dm-color-picker
 
 ### Color Picker
 ```vue
@@ -32,7 +21,7 @@ Here is a simple examples of react-color-gradient-picker being used in an app:
 </template>
 
 <script>
-import { ColorPicker } from 'vue-color-gradient-picker';
+import { ColorPicker } from 'dm-color-picker';
 
 export default {
   name: 'App',
@@ -60,7 +49,7 @@ export default {
 }
 </script>
 
-<style src="vue-color-gradient-picker/dist/index.css" lang="css" />
+<style src="dist/index.css" lang="css" />
 ```
 
 ### Gradient Color Picker
@@ -78,7 +67,7 @@ export default {
 </template>
 
 <script>
-import { ColorPicker } from 'vue-color-gradient-picker';
+import { ColorPicker } from 'dm-color-picker';
 
 export default {
   name: 'App',
@@ -120,8 +109,5 @@ export default {
 }
 </script>
 
-<style src="vue-color-gradient-picker/dist/index.css" lang="css" />
+<style src="dist/index.css" lang="css" />
 ```
-## Demo
-
-* [Solid and gradient pickers live demo](https://arthay.github.io/vue-color-gradient-picker/)
