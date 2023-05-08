@@ -6,6 +6,7 @@ export default {
   name: "index",
 
   props: {
+    canAddGradientPoint: Boolean,
     points: Array,
     activePointIndex: Number,
     changeActivePointIndex: Function,
@@ -47,6 +48,7 @@ export default {
 
   methods: {
     pointsContainerClick(event) {
+      if (!this.canAddGradientPoint) return
       const left = updateGradientActivePercent(event.layerX, this.width);
 
       this.addPoint(left);

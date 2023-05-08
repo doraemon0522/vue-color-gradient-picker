@@ -5,6 +5,7 @@ export default {
   name: "GradientPoint",
 
   props: {
+    canAddGradientPoint: Boolean,
     point: Object,
     activePointIndex: Number,
     index: Number,
@@ -75,6 +76,7 @@ export default {
     },
 
     mouseMoveHandler(event, { startX, offsetX, layerX }) {
+      if (!this.canAddGradientPoint) return
       event.stopPropagation()
       const { positions, left } = this.changeObjectPositions(event, { startX, offsetX, layerX, mouseStatus: 'moving' });
 

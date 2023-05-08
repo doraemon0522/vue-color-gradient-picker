@@ -58,6 +58,7 @@ export default {
   <div id="app">
     <ColorPicker
       :gradient="gradient"
+      :canAddGradientPoint="true"
       :isGradient="true"
       :onStartChange="color => onChange(color, 'start')"
       :onChange="color => onChange(color, 'change')"

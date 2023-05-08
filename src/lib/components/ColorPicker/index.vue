@@ -2,6 +2,7 @@
   <div class="ui-color-picker">
     <Gradient
       v-if="isGradient"
+      :canAddGradientPoint="canAddGradientPoint"
       :points="gradient.points"
       :type="gradient.type"
       :degree="gradient.degree"

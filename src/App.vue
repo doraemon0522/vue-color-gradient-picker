@@ -12,6 +12,7 @@
       <div class="offset-wrapper">
         <ColorPicker
           class="gradient-picker"
+          :can-add-gradient-point="true"
           :is-gradient="true"
           :onStartChange="(color) => onChange(color, 'start')"
           :onChange="(color) => onChange(color, 'change')"
